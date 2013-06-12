@@ -2,7 +2,7 @@ var db = {
            host     : 'localhost',
            user     : 'root',
            password : '',
-           database : 'BetterPass'                  
+           database : 'BetterPass2'                  
         };
 
 exports.db = db;

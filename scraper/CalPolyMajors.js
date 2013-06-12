@@ -1,11 +1,9 @@
 var request = require("request"),
    jsdom = require("jsdom"),
    mysql = require("mysql"),
-   config = require("../Config");
+   config = require("../Config"),
+   async = require("async");
 var DB = mysql.createConnection(config.db);
-
-var degrees = [];
-var degreeReqs = [];
 
 function Degree(name, link, type) {
    this.name = name;
@@ -19,6 +17,8 @@ function DegreeRequirement(departmentCode, courseNumber) {
 }
 
 function getDegrees(callback){
+   var degrees = [];
+
    request({
      uri: "http://catalog.calpoly.edu/programsaz/"
    }, function(error, response, body) {
@@ -84,7 +84,7 @@ function getDegrees(callback){
                   }
                }
             );
-            callback();
+            callback(degrees);
          }
       );
    });   
@@ -129,23 +129,29 @@ function getRequirements(degree, callback) {
    }); 
 }
 
-var scrapeDegrees = function(){
-   DB.connect();
-
-   getDegrees(function(){
-      for(var i = 0; i < degrees.length; i++) {
-         DB.query("INSERT INTO Degrees SET ?", degrees[i]);
-      }
+function insertDegree(degree, callback) {
+   DB.query("INSERT INTO Degrees SET ?", degree, function(){
+      callback();
    });
 }
 
-var scrapeDegreeRequirements = function(){
+var scrapeDegrees = function(callback){
    DB.connect();
 
-   getDegrees(function(){
-      for(var i = 0; i < degrees.length; i++) {
-         getRequirements(degrees[i], function(){});
-      }
+   getDegrees(function(degrees){
+      async.each(degrees, insertDegree, function(){
+         callback();
+      });
+   });
+}
+
+var scrapeDegreeRequirements = function(callback){
+   DB.connect();
+
+   getDegrees(function(degrees){
+      async.each(degrees, getRequirements, function(){
+         callback();
+      });
    });
 }
 

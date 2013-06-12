@@ -36,11 +36,12 @@ function getTerms(callback){
    });   
 }
 
-var scrapeTeachers = function(){
+var scrapeTeachers = function(callback){
    DB.connect();
 
    getTerms(function(){
       DB.end();
+      callback();
    });   
 }
 

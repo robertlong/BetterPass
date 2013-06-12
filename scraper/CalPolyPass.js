@@ -296,14 +296,13 @@ var scrapeClasses = function() {
 
          async.eachSeries(departments, processDepartment, function(err){
             DB.end();
-            console.log("Done!");
-            
+            callback();
          });
       });
    });
 }
 
-var scrapeTermsDepartmentsCourses = function() {
+var scrapeTermsDepartmentsCourses = function(callback) {
 
    DB.connect();
 
@@ -321,6 +320,7 @@ var scrapeTermsDepartmentsCourses = function() {
                   finishedDepartments.push(departments[i]);
                   if(finishedDepartments.length == departments.length) {
                      DB.end();
+                     callback();
                   } 
                });      
             }

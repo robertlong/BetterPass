@@ -8,6 +8,7 @@
     "async": "*",
     "jsdom": "*",
     "mysql": "*",
-    "request": "*"
+    "request": "*",
+    "ejs": "*"
   }
 }

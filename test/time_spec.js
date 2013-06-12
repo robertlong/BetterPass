@@ -93,7 +93,7 @@ describe('Period', function(){
       assert(new Period(t1AM, tPM).overlaps(new Period(tAM, tPM)));
    });
    it('should evaluate false', function(){
-      assert(new Period(tAM, tPM).overlaps(new Period(t1PM, new Time("2:00 PM"))));
+      assert(new Period(tAM, tPM).overlaps(new Period(t1PM, new Time("2:00 PM"))) == false);
    });
   });
 });

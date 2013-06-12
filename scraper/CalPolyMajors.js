@@ -129,11 +129,25 @@ function getRequirements(degree, callback) {
    }); 
 }
 
-DB.connect();
+var scrapeDegrees = function(){
+   DB.connect();
 
-getDegrees(function(){
-   for(var i = 0; i < degrees.length; i++) {
-      getRequirements(degrees[i], function(){});
-      //DB.query("INSERT INTO Degrees SET ?", degrees[i]);
-   }
-});
+   getDegrees(function(){
+      for(var i = 0; i < degrees.length; i++) {
+         DB.query("INSERT INTO Degrees SET ?", degrees[i]);
+      }
+   });
+}
+
+var scrapeDegreeRequirements = function(){
+   DB.connect();
+
+   getDegrees(function(){
+      for(var i = 0; i < degrees.length; i++) {
+         getRequirements(degrees[i], function(){});
+      }
+   });
+}
+
+exports.scrapeDegrees = scrapeDegrees;
+exports.scrapeDegreeRequirements = scrapeDegreeRequirements;

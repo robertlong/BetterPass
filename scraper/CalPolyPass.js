@@ -6,10 +6,10 @@ var request = require("request"),
 var DB = mysql.createConnection(config.db);
 
 var cookie = null;
-/*var terms = [];
+var terms = [];
 var departments = [];
 var finishedDepartments = [];
-var ges = [];
+/*var ges = [];
 var courses = [];
 var classes = [];
 var classReqs = [];*/
@@ -100,7 +100,7 @@ function getDepartments(term, callback){
                   var code = window.$(this).text().split("-")[0];
                   var name = window.$(this).text().split("-")[1]
                   departments.push(new Department(name, code, window.$(this).attr('value')));
-                  //DB.query("INSERT INTO Departments SET ?", new Department(name, code, window.$(this).attr('value')));
+                  DB.query("REPLACE INTO Departments SET ?", new Department(name, code, window.$(this).attr('value')));
                }
             );
             callback();
@@ -139,7 +139,7 @@ function queryCourses(query, callback) {
                   var department = window.$(this).children().eq(1).text();
                   var courseNum = parseInt(window.$(this).children().eq(2).text());
                   var name = window.$(this).children().eq(3).contents().eq(0).text().replace("\n\t\t        \t", "").trim();
-                  courses.push(new Course(name, id, department, courseNum));
+                  //courses.push(new Course(name, id, department, courseNum));
                   console.log(new Course(name, id, department, courseNum));
                }
             );
@@ -159,8 +159,7 @@ function selectCourse(course, callback) {
      headers: {cookie: cookie}
    }, function(error, response, body) {
       if(error) throw error;
-      
-      callback();
+      setTimeout(callback, 100);
    });
 }
 
@@ -222,13 +221,14 @@ function processSelectedCourses(callback) {
                      taken = parseInt(pChildren.eq(6).text());
                      status = pChildren.eq(8).text();
                      waiting = parseInt(pChildren.eq(7).text());
-                     days = children.eq(1).text() == 'TBA' ? '' : children.eq(1).text();
-                     startTime = children.eq(2).text() == 'TBA' ? null : children.eq(2).text();
-                     endTime = children.eq(3).text() == 'TBA' ? null : children.eq(3).text();
-                     building = children.eq(4).text();
-                     room = children.eq(5).text().replace(/[^TBA\d]/g,"");
-                     //console.log(new Class(courseNum, classNum, section, type, avail, taken, status, waiting, days, 
-                     //   startTime, endTime, teacher, building, room));
+
+                     if(children.length != 14) {
+                        days = children.eq(1).text() == 'TBA' ? '' : children.eq(1).text();
+                        startTime = children.eq(2).text() == 'TBA' ? null : children.eq(2).text();
+                        endTime = children.eq(3).text() == 'TBA' ? null : children.eq(3).text();
+                        building = children.eq(4).text();
+                        room = children.eq(5).text().replace(/[^TBA\d]/g,"");
+                     }
                   }
 
                   if(type == 'LEC') {
@@ -236,10 +236,9 @@ function processSelectedCourses(callback) {
                         var labChildren = window.$(this).children();
                         var labType = labChildren.eq(2).text();
                         var labNum = labChildren.eq(3).text();
-                        if(labType == 'LAB' && labNum != '') {
+                        if(labType == 'LAB' || labType == 'ACT' && labNum != '') {
                            console.log(new ClassReq(classNum, labNum));
                            reqs.push(new ClassReq(classNum, labNum));
-                           //DB.query("INSERT INTO ClassRequirements SET ?", new ClassReq(classNum, labNum));
                         }
                      });
                   }
@@ -273,26 +272,10 @@ function insertClassReq(req, callback) {
    });
 }
 
-function scrapeClasses() {
-   DB.connect();
-
-   DB.query('SELECT * FROM Departments', function(err, departments) {
-      if (err) throw err;
-
-      console.log(departments);
-
-      async.eachSeries(departments, processDepartment, function(err){
-         DB.end();
-         console.log("Done!");
-         
-      });
-   });
-}
-
 function processDepartment(department, callback) {
    console.log(department);
    DB.query('SELECT * FROM Courses WHERE department = ?', [department.code], function(err,courses){
-      async.each(courses, selectCourse, function(err){
+      async.eachSeries(courses, selectCourse, function(err){
          processSelectedCourses(function(){
             deselectCourses(function(){
                callback();
@@ -302,43 +285,49 @@ function processDepartment(department, callback) {
    });
 }
 
-buildSession(function(){
-   scrapeClasses();
-});
+var scrapeClasses = function() {
+   buildSession(function(){
+      DB.connect();
 
+      DB.query('SELECT * FROM Departments', function(err, departments) {
+         if (err) throw err;
 
-/*DB.connect();
+         console.log(departments);
 
-getTerms(function(){
-   /*terms[0].year = 2013;
-   terms[1].year = 2013;
-   terms[0].quarter = "Summer";
-   terms[1].quarter = "Fall";
-   DB.query("INSERT INTO Terms SET ?", terms[0]);
-   DB.query("INSERT INTO Terms SET ?", terms[1]);
-   console.log(terms);
-   getDepartments(terms[1].id, function(){
-      console.log(departments);
-      buildSession(terms[1].id, function(){
-         for(var i = 0; i < departments.length; i++){
-            getCoursesByDepartment(departments[i].id,function(){
-               /*finishedDepartments.push(departments[i]);
-               if(finishedDepartments.length == departments.length) {
-                  //DB.end();
-               } 
-               for(var j = 0; j < courses.length; j++) {
-                  selectCourse(courses[j].id, function(courseId){
-                  });
-                  console.log(courses[j]);
-                  //DB.query("REPLACE INTO Courses SET ?", courses[j]);
-               }
-               processSelectedCourses(function(){
-                  deselectCourses(function(){
-
-                  }); 
-               });
-            });      
-         }
+         async.eachSeries(departments, processDepartment, function(err){
+            DB.end();
+            console.log("Done!");
+            
+         });
       });
    });
-}*/
+}
+
+var scrapeTermsDepartmentsCourses = function() {
+
+   DB.connect();
+
+   getTerms(function(){
+      terms[0].year = 2013;
+      terms[1].year = 2013;
+      terms[0].quarter = "Summer";
+      terms[1].quarter = "Fall";
+      DB.query("REPLACE INTO Terms SET ?", terms[0]);
+      DB.query("REPLACE INTO Terms SET ?", terms[1]);
+      getDepartments(terms[1].id, function(){
+         buildSession(function(){
+            for(var i = 0; i < departments.length; i++){
+               getCoursesByDepartment(departments[i].id,function(){
+                  finishedDepartments.push(departments[i]);
+                  if(finishedDepartments.length == departments.length) {
+                     DB.end();
+                  } 
+               });      
+            }
+         });
+      });
+   });
+}
+
+exports.scrapeClasses = scrapeClasses;
+exports.scrapeTermsDepartmentsCourses = scrapeTermsDepartmentsCourses;

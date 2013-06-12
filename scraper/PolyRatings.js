@@ -36,8 +36,13 @@ function getTerms(callback){
    });   
 }
 
-DB.connect();
+var scrapeTeachers = function(){
+   DB.connect();
 
-getTerms(function(){
-   DB.end();
-});
+   getTerms(function(){
+      DB.end();
+   });   
+}
+
+exports.scrapeTeachers = scrapeTeachers; 
+

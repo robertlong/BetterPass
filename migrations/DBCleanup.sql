@@ -1,7 +1,18 @@
-DROP TABLE IF EXISTS Terms;
-DROP TABLE IF EXISTS Departments;
-DROP TABLE IF EXISTS Courses;
-DROP TABLE IF EXISTS Teachers;
-DROP TABLE IF EXISTS Buildings;
-DROP TABLE IF EXISTS Rooms;
-DROP TABLE IF EXISTS Classes;
+DROP TABLE ClassRequirements;
+DROP TABLE Classes;
+DROP TABLE DegreeRequirements;
+DROP TABLE Courses;
+DROP TABLE Teachers;
+DROP TABLE Degrees;
+DROP TABLE Departments;
+DROP TABLE Terms;
+
+
+
+
+
+
+
+
+
+

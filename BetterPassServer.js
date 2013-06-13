@@ -41,7 +41,21 @@ app.get('/api/classes', function(req, res){
 
 app.get('/api/classes/:id', function(req, res, next){
    DB.query('SELECT * FROM Classes Classes a, Courses b WHERE a.course = b.id AND id = ?', req.params.id, function(err, classes) {
+      if(err) {
+         return next(err);
+      }
       res.send(classes[0]);
+   });
+});
+
+app.get('/api/classes/department/:id', function(req, res, next){
+   
+   DB.query('SELECT * FROM Classes a, Courses b WHERE a.course = b.id AND b.department = ?', req.params.id, function(err, classes) {
+      if(err) {
+         console.log(err);
+         return next(err);
+      }
+      res.send(classes);
    });
 });
 

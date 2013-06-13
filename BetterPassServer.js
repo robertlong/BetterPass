@@ -25,13 +25,13 @@ app.get('/', function(req, res){
 });
 
 app.get('/api/classes', function(req, res){
-   DB.query('SELECT * FROM Classes', function(err, classes) {
+   DB.query('SELECT * FROM Classes a, Courses b WHERE a.course = b.id', function(err, classes) {
       res.send(classes);
    });
 });
 
 app.get('/api/classes/:id', function(req, res){
-   DB.query('SELECT * FROM Classes WHERE id = ?', req.params.id, function(err, classes) {
+   DB.query('SELECT * FROM Classes Classes a, Courses b WHERE a.course = b.id AND id = ?', req.params.id, function(err, classes) {
       res.send(classes[0]);
    });
 });
@@ -104,6 +104,12 @@ app.get('/api/terms/:id', function(req, res){
 app.get('/api/departments', function(req, res){
    DB.query('SELECT * FROM Departments', function(err, departments) {
       res.send(departments);
+   });
+});
+
+app.get('/api/departments/:id', function(req, res){
+   DB.query('SELECT * FROM Departments WHERE id = ?', req.params.id, function(err, departments) {
+      res.send(departments[0]);
    });
 });
 

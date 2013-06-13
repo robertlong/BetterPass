@@ -7,26 +7,33 @@ var DB = mysql.createConnection(config.db);
 
 DB.connect();
 
-//DB.query('ALTER TABLE Classes ADD tId INT');
 DB.query('SELECT * FROM Classes', function(err, classes) {
 	if (err) throw err;
 
     //console.log(classes);
     for (var i = 0; i < classes.length; i++) {
-    	var name = classes[i].tempTeacher.split(/[\s,]+/);
-    	var classId = classes[i].id;
-    	
-    	var last = name[0].trim();
-    	console.log(last + " ");
-    	if (last === 'STAFF') {
-    		var first = name[1];
-            DB.query('UPDATE Classes SET tId = -1 WHERE id = ?', classId);
-    	}
-    	else {
-            DB.query('SELECT * FROM Teachers WHERE lastName = ?', last, function(err, rows) {
-                var cId = rows[0];
-                DB.query('UPDATE Classes SET tId = ? WHERE id = ?', [cId, classId])
-            });
-    	}
-    };
+        if (classes[i].tempStartTime != null && classes[i].tempEndTime != null) {
+    	    var start = classes[i].tempStartTime.split(' ')[0];
+            var sTod = classes[i].tempStartTime.split(' ')[1];
+            var end = classes[i].tempEndTime.split(' ')[0];
+            var eTod = classes[i].tempEndTime.split(' ')[1];
+    	    var classId = classes[i].id;
+
+            
+            var sHour = parseInt(start.split(':')[0]);
+            var sMin = parseInt(start.split(':')[1]);
+            if (sTod === 'PM' && sHour !== 12) {
+                sHour += 12;
+            };
+            DB.query('UPDATE Classes SET startTime = TIME_FORMAT('', '')');
+
+            var eHour = parseInt(end.split(':')[0]);
+            var eMin = parseInt(end.split(':')[1]);
+            if (eTod === 'PM' && eHour !== 12) {
+                eHour += 12;
+            };
+            console.log(sHour + ":" + sMin + " " + eHour + ":" + eMin + " " + classId);
+            //DB.query('UPDATE Classes SET ');
+        };
+    };      	
 });

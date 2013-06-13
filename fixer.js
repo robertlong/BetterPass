@@ -7,6 +7,8 @@ var DB = mysql.createConnection(config.db);
 
 DB.connect();
 
+// Le Fail. - Andrew
+
 //DB.query('ALTER TABLE Classes ADD tId INT');
 //DB.query('INSERT INTO Teachers VALUES (NULL, "STAFF", NULL, NULL, NULL, NULL)');
 /*DB.query('SELECT * FROM Classes', function(err, classes) {
@@ -40,16 +42,19 @@ DB.connect();
 });
 */
 
+// Le Fail - Robert
 DB.query('SELECT * FROM Classes', function(err, classes) {
-    for(c in classes) {
-        var name = c.tempTeacher
-        if(name.trim != 'STAFF') {
-            DB.query('UPDATE Classes SET tId = (SELECT id FROM Teachers WHERE firstName = ? AND lastName = ?) WHERE id = ?', firstName, lastName, c.id);    
+    console.log(classes);
+    for(var i = 0; i < classes.length; i++) {
+        console.log(classes[i]);
+        var name = classes[i].tempTeacher;
+        if(name.trim() != 'STAFF') {
+            var firstName = name.split(",")[0].trim();
+            var lastName = name.split(",")[1].trim();
+            console.log(firstName,":",lastName);
+            DB.query("UPDATE Classes SET tId = (SELECT id FROM Teachers WHERE firstName like "+ mysql.escape(firstName) +" AND lastName like "+ mysql.escape(lastName) +") WHERE id = "+mysql.escape(classes[i].id)+"");    
         } else {
-            var firstName = name.split(/[\s,]+/)[0];
-            var lastName = name.split(/[\s,]+/)[1];
-            DB.query('UPDATE Classes SET tId = (SELECT id FROM Teachers WHERE firstName = ? AND lastName = ?) WHERE id = ?', firstName, lastName, c.id);    
+            DB.query('UPDATE Classes SET tId = -1 WHERE id = ?', classes[i].id);  
         }
-        
     }
-}):
+});

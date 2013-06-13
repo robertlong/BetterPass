@@ -25,15 +25,12 @@ DB.query('SELECT * FROM Classes', function(err, classes) {
             if (sTod === 'PM' && sHour !== 12) {
                 sHour += 12;
             };
-            DB.query('UPDATE Classes SET startTime = TIME_FORMAT('', '')');
-
             var eHour = parseInt(end.split(':')[0]);
             var eMin = parseInt(end.split(':')[1]);
             if (eTod === 'PM' && eHour !== 12) {
                 eHour += 12;
             };
-            console.log(sHour + ":" + sMin + " " + eHour + ":" + eMin + " " + classId);
-            //DB.query('UPDATE Classes SET ');
+            DB.query("UPDATE Classes SET startTime = TIME_FORMAT("+ mysql.escape(sHour + ':' + sMin) +", "+ mysql.escape('%H:%i') +"), endTime = TIME_FORMAT("+ mysql.escape(eHour + ':' + eMin) +", "+ mysql.escape('%H:%i') +")  WHERE id =" + mysql.escape(classId));
         };
     };      	
 });

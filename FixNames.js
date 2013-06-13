@@ -24,6 +24,9 @@ DB.query('SELECT a.id , tempTeacher, department FROM Classes a, Courses b WHERE 
             var dep = classes[i].department;
             console.log(classId);
             DB.query("UPDATE classes SET tId = (SELECT DISTINCT id FROM Teachers WHERE lastName = " + mysql.escape(last) + " AND departmentCode = " + mysql.escape(dep) + " LIMIT 1) WHERE id = " + mysql.escape(classId));
+        }
+        else {
+            DB.query("UPDATE classes SET tId = -1 WHERE id = " + mysql.escape(classId));
         };
     };      	
 });

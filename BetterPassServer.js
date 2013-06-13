@@ -24,28 +24,6 @@ app.get('/', function(req, res){
    });
 });
 
-/*app.get('/api/classes', function(req, res){
-   var sql = "SELECT " + classFields + " FROM Classes cl, Courses c, Teachers t WHERE c.id = course AND t.id = teacher";
-   _.each(req.query, function(value, key, list){
-      switch(key){
-      case 'degree':
-         var degreeID = value;
-         sql += " AND c.id IN (SELECT c.id FROM Courses WHERE department = ";
-        break;
-      case 'degrees':
-        var degreeIDs = value.split(",");
-        break;
-      default:
-      }
-   });
-
-   for(key in keys) {
-      var value = query[key];
-   }
-
-   res.send("done");
-});*/
-
 app.get('/api/classes', function(req, res){
    DB.query('SELECT * FROM Classes', function(err, classes) {
       res.send(classes);
@@ -53,13 +31,15 @@ app.get('/api/classes', function(req, res){
 });
 
 app.get('/api/classes/:id', function(req, res){
-   DB.query('SELECT * FROM Classes WHERE id = ?', params.id, function(err, classes) {
-      res.send(classes);
+   DB.query('SELECT * FROM Classes WHERE id = ?', req.params.id, function(err, classes) {
+      res.send(classes[0]);
    });
 });
 
 app.get('/api/classes/:id/requirements', function(req, res){
-   DB.query('SELECT * FROM Classes WHERE id IN (SELECT reqClass FROM ClassRequirements WHERE class = ?)', params.id, function(err, classReqs) {
+   DB.query('SELECT * FROM Classes WHERE id IN (SELECT reqClass FROM ClassRequirements WHERE class = ?)', 
+      req.params.id, function(err, classReqs) {
+
       res.send(classReqs);
    });
 });
@@ -71,13 +51,16 @@ app.get('/api/degrees', function(req, res){
 });
 
 app.get('/api/degrees/:id', function(req, res){
-   DB.query('SELECT * FROM Degrees WHERE id = ?', params.id, function(err, degrees) {
+   DB.query('SELECT * FROM Degrees WHERE id = ?', req.params.id, function(err, degrees) {
       res.send(degrees[0]);
    });
 });
 
 app.get('/api/degrees/:id/requirements', function(req, res){
-   DB.query('SELECT * FROM DegreeRequirements WHERE degree = ?', params.id, function(err, degreeReqs) {
+   DB.query('SELECT * FROM DegreeRequirements a, Courses b WHERE a.degree = ?'
+      + 'AND a.departmentCode = b.department AND a.courseNumber = b.number', 
+      req.params.id, function(err, degreeReqs) {
+
       res.send(degreeReqs);
    });
 });
@@ -101,19 +84,19 @@ app.get('/api/teachers', function(req, res){
 });
 
 app.get('/api/teachers/:id', function(req, res){
-   DB.query('SELECT * FROM Teachers WHERE id = ?', params.id, function(err, teachers) {
+   DB.query('SELECT * FROM Teachers WHERE id = ?', req.params.id, function(err, teachers) {
       res.send(teachers[0]);
    });
 });
 
 app.get('/api/terms', function(req, res){
-   DB.query('SELECT * FROM Terms', function(err, terms {
+   DB.query('SELECT * FROM Terms', function(err, terms) {
       res.send(terms);
    });
 });
 
 app.get('/api/terms/:id', function(req, res){
-   DB.query('SELECT * FROM Terms WHERE id = ?', params.id, function(err, terms) {
+   DB.query('SELECT * FROM Terms WHERE id = ?', req.params.id, function(err, terms) {
       res.send(terms[0]);
    });
 });
@@ -121,6 +104,12 @@ app.get('/api/terms/:id', function(req, res){
 app.get('/api/departments', function(req, res){
    DB.query('SELECT * FROM Departments', function(err, departments) {
       res.send(departments);
+   });
+});
+
+app.get('/api/departments/:id', function(req, res){
+   DB.query('SELECT * FROM Departments WHERE id = ?', req.params.id, function(err, departments) {
+      res.send(departments[0]);
    });
 });
 

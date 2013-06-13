@@ -9,7 +9,7 @@ DB.connect();
 
 //DB.query('ALTER TABLE Classes ADD tId INT');
 //DB.query('INSERT INTO Teachers VALUES (NULL, "STAFF", NULL, NULL, NULL, NULL)');
-DB.query('SELECT * FROM Classes', function(err, classes) {
+/*DB.query('SELECT * FROM Classes', function(err, classes) {
 	if (err) throw err;
 
     //console.log(classes);
@@ -38,3 +38,18 @@ DB.query('SELECT * FROM Classes', function(err, classes) {
     	}
     };
 });
+*/
+
+DB.query('SELECT * FROM Classes', function(err, classes) {
+    for(c in classes) {
+        var name = c.tempTeacher
+        if(name.trim != 'STAFF') {
+            DB.query('UPDATE Classes SET tId = (SELECT id FROM Teachers WHERE firstName = ? AND lastName = ?) WHERE id = ?', firstName, lastName, c.id);    
+        } else {
+            var firstName = name.split(/[\s,]+/)[0];
+            var lastName = name.split(/[\s,]+/)[1];
+            DB.query('UPDATE Classes SET tId = (SELECT id FROM Teachers WHERE firstName = ? AND lastName = ?) WHERE id = ?', firstName, lastName, c.id);    
+        }
+        
+    }
+}):

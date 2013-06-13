@@ -1,7 +1,7 @@
 var db = {
            host     : 'localhost',
            user     : 'root',
-           password : 'atsugi95',
+           password : '',
            database : 'BetterPass'                  
         };
 

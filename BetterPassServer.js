@@ -6,44 +6,17 @@ var _ = require("underscore");
 var crypto = require('crypto');
 var DB = mysql.createConnection(config.db);
 
-var classFields = "cl.id,course AS courseID, c.name, c.department, c.number AS courseNum,section,"
-            +"t.firstName AS teacherFirstName t.lastName AS teacherLastName, t.rating AS teacherRating," 
-            +"t.link AS polyRatingURL,type,avail,taken,waiting,status,days,startTime,endTime,building,room";
-
 app.use(express.static(__dirname + '/public'));
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 app.use(app.router);
 
-// Since this is the last non-error-handling
-// middleware use()d, we assume 404, as nothing else
-// responded.
-
 app.use(function(req, res, next){
-  // the status option, or res.statusCode = 404
-  // are equivalent, however with the option we
-  // get the "status" local available as well
   res.send(500, 'Page not found!');
 });
 
-// error-handling middleware, take the same form
-// as regular middleware, however they require an
-// arity of 4, aka the signature (err, req, res, next).
-// when connect has an error, it will invoke ONLY error-handling
-// middleware.
-
-// If we were to next() here any remaining non-error-handling
-// middleware would then be executed, or if we next(err) to
-// continue passing the error, only error-handling middleware
-// would remain being executed, however here
-// we simply respond with an error page.
-
-
 app.use(function(err, req, res, next){
-  // we may use properties of the error object
-  // here and next(err) appropriately, or if
-  // we possibly recovered from the error, simply next().
   res.send(500, 'Something broke!');
 });
 

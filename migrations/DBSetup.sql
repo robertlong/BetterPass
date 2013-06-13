@@ -85,3 +85,10 @@ CREATE TABLE ClassRequirements (
    REFERENCES Classes(id)
 );
 
+CREATE TABLE Clubs (
+   id INT PRIMARY KEY AUTO_INCREMENT,
+   name VARCHAR(64),
+   website VARCHAR(128),
+   adminToken VARCHAR(256)
+);
+

@@ -10,6 +10,7 @@
     "mysql": "*",
     "request": "*",
     "ejs": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "crypto": "*"
   }
 }

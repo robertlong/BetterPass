@@ -29,7 +29,9 @@ CREATE TABLE Teachers (
    lastName VARCHAR(64),
    departmentCode VARCHAR(8),
    rating DECIMAL(4,3),
-   link VARCHAR(128)
+   link VARCHAR(128),
+   CONSTRAINT fk_department FOREIGN KEY (department)
+   REFERENCES Departments(code)
 );
 
 -- Done
@@ -51,7 +53,9 @@ CREATE TABLE DegreeRequirements (
    departmentCode VARCHAR(8),
    courseNumber INT,
    CONSTRAINT fk_degree FOREIGN KEY (degree)
-   REFERENCES Degrees(id)
+   REFERENCES Degrees(id),
+   CONSTRAINT fk_department FOREIGN KEY (department)
+   REFERENCES Departments(code)
 );
 
 -- Done
@@ -70,8 +74,11 @@ CREATE TABLE Classes (
    tempEndTime VARCHAR(16),
    building VARCHAR(128),
    room VARCHAR(8),
+   tId INT,
    CONSTRAINT fk_course FOREIGN KEY (course)
-   REFERENCES Courses(id)
+   REFERENCES Courses(id),
+   CONSTRAINT fk_tId FOREIGN KEY (tId)
+   REFERENCES Teachers(id)
 );
 
 -- Done

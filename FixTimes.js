@@ -34,3 +34,8 @@ DB.query('SELECT * FROM Classes', function(err, classes) {
         };
     };      	
 });
+
+DB.query("ALTER TABLE Classes DROP tempEndTime");
+DB.query("ALTER TABLE Classes DROP tempStartTime");
+
+

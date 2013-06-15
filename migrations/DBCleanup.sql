@@ -6,4 +6,4 @@ DROP TABLE Teachers;
 DROP TABLE Degrees;
 DROP TABLE Departments;
 DROP TABLE Terms;
-DROP TABLE Clubs;
+/*DROP TABLE Clubs;*/

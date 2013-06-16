@@ -13,11 +13,11 @@ app.set('view engine', 'html');
 app.use(app.router);
 
 app.use(function(req, res, next){
-  res.send(404, 'Page not found!');
+  res.send(404, '{ error: "Item not found", code: 404}');
 });
 
 app.use(function(err, req, res, next){
-  res.send(500, 'Something broke!');
+  res.send(500, '{ error: "Unknown error", code: 500}');
 });
 
 DB.connect();
@@ -45,7 +45,7 @@ app.get('/api/classes/:id', function(req, res, next){
          return next(err);
       }
       if(classes.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(classes[0]);
    });
@@ -85,7 +85,7 @@ app.get('/api/degrees/:id', function(req, res, next){
          return next(err);
       }
       if(degrees.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(degrees[0]);
    });
@@ -118,7 +118,7 @@ app.get('/api/courses/:id', function(req, res, next){
          return next(err);
       }
       if(courses.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(courses[0]);
    });
@@ -139,7 +139,7 @@ app.get('/api/teachers/:id', function(req, res, next){
          return next(err);
       }
       if(teachers.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(teachers[0]);
    });
@@ -169,7 +169,7 @@ app.get('/api/terms/:id', function(req, res, next){
          return next(err);
       }
       if(terms.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(terms[0]);
    });
@@ -190,7 +190,7 @@ app.get('/api/departments/:id', function(req, res, next){
          return next(err);
       }
       if(departments.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(departments[0]);
    });
@@ -231,7 +231,7 @@ app.get('/api/clubs/new', function(req, res, next){
          res.send(club);
       });  
    } else{
-      res.send("Invalid parameters");
+      res.send(501, '{ error: "Invalid parameters", code: 501}');
    }
    
 });
@@ -242,7 +242,7 @@ app.get('/api/clubs/:id', function(req, res, next){
          return next(err);
       }
       if(clubs.length == 0) {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       res.send(clubs[0]);
    });
@@ -269,7 +269,7 @@ app.get('/api/clubs/:id/edit', function(req, res, next){
             var hashedPass = crypto.createHash('md5').update(req.query.adminToken).digest("hex");   
             var storedHash = clubs[0].adminToken;
          } else {
-            res.send("Invalid token");
+            res.send(501, '{ error: "Invalid token", code: 501}');
          } 
          
          if(hashedPass == storedHash) {
@@ -283,13 +283,13 @@ app.get('/api/clubs/:id/edit', function(req, res, next){
                });
                console.log(q2.sql);   
             } else{
-               res.send("Invalid parameters");
+               res.send(501, '{ error: "Invalid parameters", code: 501}');
             }
          } else{
-            res.send("Invalid token");
+            res.send(502, '{ error: "Invalid token", code: 502}');
          }   
       } else {
-         res.send(404, 'Item not found!');
+         res.send(404, '{ error: "Item not found", code: 404}');
       }
       
    });
